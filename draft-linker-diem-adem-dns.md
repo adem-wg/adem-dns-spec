@@ -60,7 +60,7 @@ If multiple sets of tokens are associated with a given domain name, issuers SHOU
 Each token is distributed as its own TXT record, which includes a key and a value.
 The value encodes the token in JWT compact serialization.
 To prevent redundancy and keep tokens short, issuers MAY provide verification keys using TXT records as well instead of encoding them in the headers or bodies of tokens.
-In that case, the value of the record MUST be the corresponding key in JWK format without any whitespaces.
+In that case, the value of the record MUST be a public key in base64 ASN.1 encoding, i.e., the key's `SubjectPublicKeyInfo` as per {{!RFC5280}}, Section 4.1, in base64 encoding as per {{!RFC4648}}.
 
 Each record's key MUST be formatted as:
 
