@@ -3,9 +3,9 @@
 
 
 Digital Emblems                                                F. Linker
-Internet-Draft                                           8 November 2025
+Internet-Draft                                          24 November 2025
 Intended status: Informational                                          
-Expires: 12 May 2026
+Expires: 28 May 2026
 
 
                ADEM - Distribution and Discovery over DNS
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 May 2026.
+   This Internet-Draft will expire on 28 May 2026.
 
 Copyright Notice
 
@@ -108,8 +108,9 @@ Table of Contents
    serialization.  To prevent redundancy and keep tokens short, issuers
    MAY provide verification keys using TXT records as well instead of
    encoding them in the headers or bodies of tokens.  In that case, the
-   value of the record MUST be the corresponding key in JWK format
-   without any whitespaces.
+   value of the record MUST be a public key in base64 ASN.1 encoding,
+   i.e., the key's SubjectPublicKeyInfo as per [RFC5280], Section 4.1,
+   in base64 encoding as per [RFC4648].
 
    Each record's key MUST be formatted as:
 
@@ -172,6 +173,16 @@ Table of Contents
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
+              Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
+              <https://www.rfc-editor.org/rfc/rfc4648>.
+
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/rfc/rfc5280>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
