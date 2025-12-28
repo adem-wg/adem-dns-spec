@@ -3,9 +3,9 @@
 
 
 Digital Emblems                                                F. Linker
-Internet-Draft                                          24 November 2025
+Internet-Draft                                          28 December 2025
 Intended status: Informational                                          
-Expires: 28 May 2026
+Expires: 1 July 2026
 
 
                ADEM - Distribution and Discovery over DNS
@@ -19,9 +19,9 @@ About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at
-   https://felixlinker.github.io/adem-dns-spec/draft-linker-diem-adem-
-   dns.html.  Status information for this document may be found at
+   The latest revision of this draft can be found at https://adem-
+   wg.github.io/adem-dns-spec/draft-linker-diem-adem-dns.html.  Status
+   information for this document may be found at
    https://datatracker.ietf.org/doc/draft-linker-diem-adem-dns/.
 
    Discussion of this document takes place on the Digital Emblems
@@ -30,7 +30,7 @@ About This Document
    https://www.ietf.org/mailman/listinfo/diem/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/felixlinker/adem-dns-spec.
+   https://github.com/adem-wg/adem-dns-spec.
 
 Status of This Memo
 
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 May 2026.
+   This Internet-Draft will expire on 1 July 2026.
 
 Copyright Notice
 
