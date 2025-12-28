@@ -20,8 +20,8 @@ venue:
   type: "Working Group"
   mail: "diem@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/diem"
-  github: "felixlinker/adem-dns-spec"
-  latest: "https://felixlinker.github.io/adem-dns-spec/draft-linker-diem-adem-dns.html"
+  github: "adem-wg/adem-dns-spec"
+  latest: "https://adem-wg.github.io/adem-dns-spec/draft-linker-diem-adem-dns.html"
 
 author:
  -
