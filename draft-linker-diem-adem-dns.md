@@ -59,15 +59,11 @@ If multiple sets of tokens are associated with a given domain name, issuers SHOU
 
 Each token is distributed as its own TXT record, which includes a key and a value.
 The value encodes the token in JWT compact serialization.
-To prevent redundancy and keep tokens short, issuers MAY provide verification keys using TXT records as well instead of encoding them in the headers or bodies of tokens.
-In that case, the value of the record MUST be a public key in base64 ASN.1 encoding, i.e., the key's `SubjectPublicKeyInfo` as per {{!RFC5280}}, Section 4.1, in base64 encoding as per {{!RFC4648}}.
 
 Each record's key MUST be formatted as:
 
 ~~~~
-key := type [ "-" identifier ] | "adem-key"
-
-type := "adem-emb" | "adem-end"
+key := "adem" [ "-" identifier ]
 
 identifier := CHARACTER-NO-HYPEN+
 
@@ -75,25 +71,7 @@ record := key "=" value
 ~~~~
 
 `CHARACTER-NO-HYPEN` is any printable ASCII character as specified in {{!RFC0020}} except for `"-"`.
-`DIGIT` is the range of ASCII characters `"0"` to `"9"`.
-`type` MUST coincide with the token's "cty" claim.
 If present, `identifier` MUST coincide with the string identifying the token's set.
-
-# DNS Querying
-
-To effectively query a DNS record for emblems, verifiers need to distinguish different sets of tokens.
-In this section, we detail how to extract all a domain name's associated sets of tokens.
-
-First, a verifier MUST resolve a domain name's TXT records.
-
-Second, for each record, starting with one of the values of `type`, the verifier parses the record according to the above.
-Records for which parsing fails MUST be ignored.
-
-Third, for each emblem identified in the previous step, the verifier assembles a set of tokens and verification keys.
-Any token which either has the same identifier as the emblem, or has no identifier MUST be considered as belonging to that emblem's set of tokens.
-Any key included in TXT record MUST be considered for verification purposes.
-
-Finally, for each of these sets, the verifier can proceed to verify them as specified in.
 
 # Security Considerations
 
