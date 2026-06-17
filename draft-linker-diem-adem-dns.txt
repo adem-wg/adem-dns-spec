@@ -3,9 +3,9 @@
 
 
 Digital Emblems                                                F. Linker
-Internet-Draft                                           15 January 2026
+Internet-Draft                                              17 June 2026
 Intended status: Informational                                          
-Expires: 19 July 2026
+Expires: 19 December 2026
 
 
                ADEM - Distribution and Discovery over DNS
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 July 2026.
+   This Internet-Draft will expire on 19 December 2026.
 
 Copyright Notice
 
@@ -95,20 +95,22 @@ Table of Contents
 3.  DNS Distribution
 
    Given a set of tokens containing exactly one emblem and zero or more
-   associated endorsements, issuers can distribute this set via DNS TXT
-   records [RFC1035], as follows.
+   associated endorsements, issuers can distribute this set and any
+   public keys needed to validate it via DNS TXT records [RFC1035], as
+   follows.
 
    For each such set, issuers MAY choose a unique _identifier_ string.
    If multiple sets of tokens are associated with a given domain name,
    issuers SHOULD choose such a string.
 
-   Each token is distributed as its own TXT record, which includes a key
-   and a value.  The value encodes the token in JWT compact
-   serialization.
+   Each token or public key is distributed as its own TXT record, which
+   includes a key and a value.  For token records, the value encodes the
+   token in JWT compact serialization.  For public key records, the
+   value encodes the public key as a JSON Web Key (JWK) [RFC7517].
 
    Each record's key MUST be formatted as:
 
-   key := "adem" [ "-" identifier ]
+   key := "adem-" ( "token" | "key" ) [ "-" identifier ]
 
    identifier := CHARACTER-NO-HYPEN+
 
@@ -116,7 +118,7 @@ Table of Contents
 
    CHARACTER-NO-HYPEN is any printable ASCII character as specified in
    [RFC0020] except for "-".  If present, identifier MUST coincide with
-   the string identifying the token's set.
+   the string identifying the token set.
 
 4.  Security Considerations
 
@@ -152,6 +154,10 @@ Table of Contents
    [RFC7515]  Jones, M., Bradley, J., and N. Sakimura, "JSON Web
               Signature (JWS)", RFC 7515, DOI 10.17487/RFC7515, May
               2015, <https://www.rfc-editor.org/rfc/rfc7515>.
+
+   [RFC7517]  Jones, M., "JSON Web Key (JWK)", RFC 7517,
+              DOI 10.17487/RFC7517, May 2015,
+              <https://www.rfc-editor.org/rfc/rfc7517>.
 
 Acknowledgments
 
