@@ -52,18 +52,19 @@ This document describes a DNS-based distribution and discovery for ADEM tokens.
 
 # DNS Distribution
 
-Given a set of tokens containing exactly one emblem and zero or more associated endorsements, issuers can distribute this set via DNS TXT records {{!RFC1035}}, as follows.
+Given a set of tokens containing exactly one emblem and zero or more associated endorsements, issuers can distribute this set and any public keys needed to validate it via DNS TXT records {{!RFC1035}}, as follows.
 
 For each such set, issuers MAY choose a unique *identifier* string.
 If multiple sets of tokens are associated with a given domain name, issuers SHOULD choose such a string.
 
-Each token is distributed as its own TXT record, which includes a key and a value.
-The value encodes the token in JWT compact serialization.
+Each token or public key is distributed as its own TXT record, which includes a key and a value.
+For token records, the value encodes the token in JWT compact serialization.
+For public key records, the value encodes the public key as a JSON Web Key (JWK) {{?RFC7517}}.
 
 Each record's key MUST be formatted as:
 
 ~~~~
-key := "adem" [ "-" identifier ]
+key := "adem-" ( "token" | "key" ) [ "-" identifier ]
 
 identifier := CHARACTER-NO-HYPEN+
 
@@ -71,7 +72,7 @@ record := key "=" value
 ~~~~
 
 `CHARACTER-NO-HYPEN` is any printable ASCII character as specified in {{!RFC0020}} except for `"-"`.
-If present, `identifier` MUST coincide with the string identifying the token's set.
+If present, `identifier` MUST coincide with the string identifying the token set.
 
 # Security Considerations
 
