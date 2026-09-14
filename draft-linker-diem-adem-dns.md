@@ -63,26 +63,19 @@ The RDATA for an `IHLE` RR consists of a single variable-length Token field.
 The Token field MUST contain either:
 
 * The exact CBOR serialization of one ADEM token encoded as specified by the ADEM Core Specification {{!I-D.linker-diem-adem-core}}; or
-* The exact CBOR serialization of one CWT {{!RFC8392}} containing public key material.
+* The exact CBOR serialization of one COSE_Key {{!rfc9052}} containing public key material.
 
-Public key material MAY be distributed alongside ADEM tokens in the same `IHLE` RRset.
 The field consumes all octets indicated by RDLENGTH.
 It MUST contain exactly one complete CBOR data item and MUST NOT contain trailing data.
 
-Each ADEM token or CWT containing public key material MUST be carried in a separate `IHLE` RR.
-Consequently, an owner name associated with multiple such items has an `IHLE` RRset containing one RR per item.
-DNS does not preserve the order of records in an RRset; the `IHLE` RR therefore does not indicate an order among ADEM tokens or CWTs containing public key material.
-
 ## IHLE RDATA Presentation Format
 
-The presentation format of the RDATA portion, as visible in a master file, consists of the Token field represented as a sequence of uppercase hexadecimal digits.
-Each RDATA octet is represented by exactly two hexadecimal digits, most significant digit first.
-The letters `A` through `F` MUST be uppercase.
-For readability, whitespace MAY be inserted between octets when the RDATA is enclosed in continuation parentheses as described in {{!RFC1035}}; this whitespace is not part of the Token field.
+The presentation format of the RDATA portion MUST represent the Token field as a sequence of case-insensitive hexadecimal digits.
+Whitespace is allowed within the hexadecimal text.
 
 ## Additional Section Processing
 
-When an authoritative name server receives a query whose QNAME is the owner name of an `IHLE` RRset in the QCLASS, it MUST include that RRset in the Additional section of the response, unless the RRset is already included in the Answer section.
+When a name server receives a query whose QNAME is the owner name of an `IHLE` RRset in the QCLASS, it MUST include that RRset in the Additional section of the response, unless the RRset is already included in the Answer section.
 This requirement applies regardless of the query's QTYPE.
 
 The server MUST NOT include only a subset of the `IHLE` RRset.
@@ -90,37 +83,20 @@ If the transport's size limit prevents the complete RRset from being included, t
 
 ## DNSSEC Considerations
 
-ADEM tokens are signed and are validated independently of the DNS channel.
-Zone operators SHOULD NOT sign an `IHLE` RRset specifically to establish the authenticity of its tokens, and they SHOULD NOT enable DNSSEC solely for that purpose.
-
+ADEM tokens are signed objects.
+Zone operators thus SHOULD NOT sign an `IHLE` RRset using DNSSEC.
 An `IHLE` RRset MAY nevertheless be signed with DNSSEC, for example, because it occurs in a zone whose operational policy is to sign all RRsets.
-The presence of an RRSIG covering an `IHLE` RRset is not an error.
 DNS software MUST process such signatures according to the normal DNSSEC rules in {{!RFC4033}}, {{!RFC4034}}, and {{!RFC4035}}.
 Successful DNSSEC validation of the RRset MUST NOT be treated as successful validation of any ADEM token it contains or as establishing trust in public key material for ADEM validation.
 
 # Security Considerations
 
-The presence of an `IHLE` RR does not establish that its ADEM token is valid, that its public key material is trusted, or that the owner name is protected under IHL.
-Validators MUST validate each ADEM token as specified by the ADEM Core Specification {{!I-D.linker-diem-adem-core}}.
-Public key material obtained from an `IHLE` RR MAY be used to verify token signatures, but validators MUST independently establish the key's identifier and trust as required by the ADEM Core Specification.
-
-An attacker able to alter DNS responses can add, remove, or replay `IHLE` records.
-Token signatures and the validation procedure in the ADEM Core Specification detect invalid tokens, while token validity periods limit replay; they do not prevent removal of records.
-DNSSEC can provide origin authentication and integrity for the RRset, but, as described in {{dnssec-considerations}}, does not replace ADEM token validation.
-
-Automatically adding an `IHLE` RRset can increase the size of DNS responses and their usefulness in reflection attacks.
-Authoritative name servers implementing this specification SHOULD employ the same amplification mitigations they apply to other large DNS responses.
+TODO
 
 
 # IANA Considerations
 
-## IHLE RR Type {#iana-rrtype}
-
-IANA is requested to allocate a code from the "Resource Record (RR) TYPEs" subregistry of the "Domain Name System (DNS) Parameters" registry, as follows:
-
-| TYPE | Value | Meaning | Reference |
-| --- | --- | --- | --- |
-| IHLE | TBD1 | International Humanitarian Law Emblem token or CWT-encoded public key material | This document |
+TODO
 
 
 --- back
