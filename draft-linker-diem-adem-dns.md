@@ -41,8 +41,8 @@ This document defines the DNS `IHLE` resource record for distributing those toke
 
 # Introduction
 
-The ADEM Core Specification {{!I-D.linker-diem-adem-core}} specifies how a set of *tokens*, encoded using the Concise Binary Object Representation (CBOR) {{!RFC8949}}, can be used as a digital emblem to signal that digital assets enjoy specific protections under International Humanitarian Law (IHL).
-This document defines the `IHLE` DNS resource record (RR) for distributing and discovering ADEM tokens and public key material encoded as CBOR Web Tokens (CWTs) {{!RFC8392}}.
+{{!I-D.linker-diem-adem-core}} specifies the message format and authorization model of digital emblems recognized under International Humanitarian Law (IHL).
+This draft specifies how such digital emblems can be applied to fully qualified domain names (FQDNs) using the DNS and the new `IHLE` DNS resource record (RR).
 
 # Conventions and Definitions
 
@@ -52,19 +52,13 @@ DNS terminology and message fields are used as defined in {{!RFC1035}}.
 
 # The IHLE Resource Record
 
-The International Humanitarian Law Emblem (`IHLE`) DNS resource record (RR) is used to publish an ADEM token or CWT-encoded public key material at a domain name.
-The type value for the `IHLE` RR is defined in {{iana-rrtype}}.
-
-The `IHLE` RR is class independent and has no special Time to Live (TTL) requirements.
+The International Humanitarian Law Emblem (`IHLE`) DNS resource record (RR) is used to publish ADEM tokens or public key material {{!I-D.linker-diem-adem-core}} at a domain name, both of which are encoded as CBOR Web Tokens (CWTs) {{!RFC9052}}.
+The type value for the `IHLE` RR is defined TODO.
 
 ## IHLE RDATA Wire Format
 
 The RDATA for an `IHLE` RR consists of a single variable-length Token field.
-The Token field MUST contain either:
-
-* The exact CBOR serialization of one ADEM token encoded as specified by the ADEM Core Specification {{!I-D.linker-diem-adem-core}}; or
-* The exact CBOR serialization of one COSE_Key {{!rfc9052}} containing public key material.
-
+The Token field MUST contain a CWT that either encodes an ADEM token or ADEM-related public key material as specified in {{!I-D.linker-diem-adem-core}}.
 The field consumes all octets indicated by RDLENGTH.
 It MUST contain exactly one complete CBOR data item and MUST NOT contain trailing data.
 
@@ -83,11 +77,20 @@ If the transport's size limit prevents the complete RRset from being included, t
 
 ## DNSSEC Considerations
 
-ADEM tokens are signed objects.
-Zone operators thus SHOULD NOT sign an `IHLE` RRset using DNSSEC.
+ADEM tokens already are signed objects.
+Zone operators thus MAY NOT sign an `IHLE` RRset using DNSSEC.
 An `IHLE` RRset MAY nevertheless be signed with DNSSEC, for example, because it occurs in a zone whose operational policy is to sign all RRsets.
 DNS software MUST process such signatures according to the normal DNSSEC rules in {{!RFC4033}}, {{!RFC4034}}, and {{!RFC4035}}.
 Successful DNSSEC validation of the RRset MUST NOT be treated as successful validation of any ADEM token it contains or as establishing trust in public key material for ADEM validation.
+
+# Discovering IHLE Emblems
+
+For distribution over the DNS, assets are identified by FQDNs.
+To retrieve an asset's digital emblems, validators can perform a general DNS lookup, as specified in {{!RFC1034}}, with the asset's FQDN as QNAME, an arbitrary QTYPE, and the QCLASS `IN`.
+When validators receive a set of tokens and public keys over the DNS, they SHOULD validate it as follows:
+
+1. Validate the set of tokens according to {{!I-D.linker-diem-adem-core}}.
+2. If the validation procedure returns a result other than `INVALID`, verify that the queried FQDN represented in all lower-case occurs in the emblem's `assets` claim value (using simple string comparison).
 
 # Security Considerations
 
