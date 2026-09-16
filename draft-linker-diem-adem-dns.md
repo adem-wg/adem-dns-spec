@@ -1,5 +1,5 @@
 ---
-title: "ADEM - Distribution and Discovery over DNS"
+title: "An Authentic Digital, Distinctive EMblem (ADEM) - Distribution and Discovery over the DNS"
 abbrev: "ADEM over DNS"
 category: info
 
@@ -33,16 +33,15 @@ informative:
 
 --- abstract
 
-The ADEM Core Specification defines tokens that mark digital assets as protected under international humanitarian law.
-This document defines the DNS `IHLE` resource record for distributing those tokens and CWT-encoded public key material and specifies how authoritative name servers include them in responses concerning the same owner name.
-
+The ADEM Core Specification specifies the message format and authorization model for digital, distinctive emblems.
+This document specifies how such emblems can be used to mark domain names and how they can be conveyed over the DNS.
 
 --- middle
 
 # Introduction
 
-{{!I-D.linker-diem-adem-core}} specifies the message format and authorization model of digital emblems recognized under International Humanitarian Law (IHL).
-This draft specifies how such digital emblems can be applied to fully qualified domain names (FQDNs) using the DNS and the new `IHLE` DNS resource record (RR).
+{{!I-D.linker-diem-adem-core}} specifies the message format and authorization model of digital emblems recognized under International Humanitarian Law (IHL), in particular, it specifies the use of CBOR Web Tokens (CWTs) {{!RFC8392}} and COSE_Key structures {{!RFC9052}} for digital, distinctive emblems.
+This draft specifies how such emblems can mark fully qualified domain names (FQDNs) using the DNS and the new `IHLE` DNS resource record (RR) type.
 
 # Conventions and Definitions
 
@@ -52,15 +51,19 @@ DNS terminology and message fields are used as defined in {{!RFC1035}}.
 
 # The IHLE Resource Record
 
-The International Humanitarian Law Emblem (`IHLE`) DNS resource record (RR) is used to publish ADEM tokens or public key material {{!I-D.linker-diem-adem-core}} at a domain name, both of which are encoded as CBOR Web Tokens (CWTs) {{!RFC9052}}.
-The type value for the `IHLE` RR is defined TODO.
+The `IHLE` (International Humanitarian Law Emblem) DNS RR type is used to mark an FQDN with a digital, distinctive emblem {{!I-D.linker-diem-adem-core}}.
+The type value for the `IHLE` RR is TODO.
 
 ## IHLE RDATA Wire Format
 
 The RDATA for an `IHLE` RR consists of a single variable-length Token field.
-The Token field MUST contain a CWT that either encodes an ADEM token or ADEM-related public key material as specified in {{!I-D.linker-diem-adem-core}}.
+The Token field MUST contain a CWT that either encodes an ADEM token or a COSE_Key structure containing ADEM-related public key material as specified in {{!I-D.linker-diem-adem-core}}.
 The field consumes all octets indicated by RDLENGTH.
 It MUST contain exactly one complete CBOR data item and MUST NOT contain trailing data.
+
+When an `IHLE` RR contains an emblem, the emblem's `assets` claim, MUST be an array (major type 4) of UTF-8 strings (major type 3).
+Each string in this array MUST be an FQDN {{!RFC9499}}.
+Relative names, i.e., without a terminating empty label, are permitted and MUST be interpreted relative to the empty root label.
 
 ## IHLE RDATA Presentation Format
 
@@ -78,19 +81,30 @@ If the transport's size limit prevents the complete RRset from being included, t
 ## DNSSEC Considerations
 
 ADEM tokens already are signed objects.
-Zone operators thus MAY NOT sign an `IHLE` RRset using DNSSEC.
+Zone operators thus SHOULD NOT sign an `IHLE` RRset using DNSSEC.
 An `IHLE` RRset MAY nevertheless be signed with DNSSEC, for example, because it occurs in a zone whose operational policy is to sign all RRsets.
 DNS software MUST process such signatures according to the normal DNSSEC rules in {{!RFC4033}}, {{!RFC4034}}, and {{!RFC4035}}.
 Successful DNSSEC validation of the RRset MUST NOT be treated as successful validation of any ADEM token it contains or as establishing trust in public key material for ADEM validation.
 
-# Discovering IHLE Emblems
+# Discovering and Validating IHLE Emblems
 
 For distribution over the DNS, assets are identified by FQDNs.
 To retrieve an asset's digital emblems, validators can perform a general DNS lookup, as specified in {{!RFC1034}}, with the asset's FQDN as QNAME, an arbitrary QTYPE, and the QCLASS `IN`.
-When validators receive a set of tokens and public keys over the DNS, they SHOULD validate it as follows:
+When validators receive a set of tokens and public keys over the DNS, they validate it as follows:
 
-1. Validate the set of tokens according to {{!I-D.linker-diem-adem-core}}.
-2. If the validation procedure returns a result other than `INVALID`, verify that the queried FQDN represented in all lower-case occurs in the emblem's `assets` claim value (using simple string comparison).
+1. Validate the set of tokens and public keys according to {{!I-D.linker-diem-adem-core}}.
+2. If the validation procedure returns a result other than `INVALID`, verify that the queried FQDN represented occurs in the emblem's `assets` claim value using simple, case-insensitive string comparison.
+
+# Semantics of IHLE Emblems
+
+A valid emblem that marks an FQDN signals that this domain name and services associated with this domain name are used for purposes protected under IHL.
+It signals that the domain name and services associated with that domain name should be respected, protected, and not disrupted.
+Intuitively speaking, the emblem has the function of a stop sign and signals that one should not use a domain name as part of an operation to disrupt services.
+
+The emblem does not signal that systems which are identified by the domain name, e.g., via `A` or `AAAA` records, enjoy the same specific protections as the domain name itself.
+For example, it could be that a domain name has an `A` record which contains an IP address that routes to a multi-tenant database server, and tenants are identified by the domain name.
+That database server requires queries to include the domain of the tenant, and by itself, may not be protected.
+Nevertheless, if one were to only discover this database server via a domain name that is marked with an emblem, there should be no reason to disrupt that database server.
 
 # Security Considerations
 
