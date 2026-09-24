@@ -40,7 +40,7 @@ This document specifies how such emblems can be used to mark domain names and ho
 
 # Introduction
 
-{{!I-D.linker-diem-adem-core}} specifies the message format and authorization model of digital emblems recognized under International Humanitarian Law (IHL), in particular, it specifies the use of CBOR Web Tokens (CWTs) {{!RFC8392}} and COSE_Key structures {{!RFC9052}} for digital, distinctive emblems.
+{{!I-D.linker-diem-adem-core}} specifies the message format and authorization model of digital emblems recognized under International Humanitarian Law (IHL); in particular, it specifies the use of CBOR Web Tokens (CWTs) {{!RFC8392}} and COSE_Key structures {{!RFC9052}} for digital, distinctive emblems.
 This draft specifies how such emblems can mark fully qualified domain names (FQDNs) using the DNS and the new `IHLE` DNS resource record (RR) type.
 
 # Conventions and Definitions
@@ -61,7 +61,7 @@ The Token field MUST contain a CWT that either encodes an ADEM token or a COSE_K
 The field consumes all octets indicated by RDLENGTH.
 It MUST contain exactly one complete CBOR data item and MUST NOT contain trailing data.
 
-When an `IHLE` RR contains an emblem, the emblem's `assets` claim, MUST be an array (major type 4) of UTF-8 strings (major type 3).
+When an `IHLE` RR contains an emblem, the emblem's `assets` claim MUST be an array (major type 4) of UTF-8 strings (major type 3).
 Each string in this array MUST be an FQDN {{!RFC9499}}.
 Relative names, i.e., without a terminating empty label, are permitted and MUST be interpreted relative to the empty root label.
 
@@ -93,7 +93,7 @@ To retrieve an asset's digital emblems, validators can perform a general DNS loo
 When validators receive a set of tokens and public keys over the DNS, they validate it as follows:
 
 1. Validate the set of tokens and public keys according to {{!I-D.linker-diem-adem-core}}.
-2. If the validation procedure returns a result other than `INVALID`, verify that the queried FQDN represented occurs in the emblem's `assets` claim value using simple, case-insensitive string comparison.
+2. If the validation procedure returns a result other than `INVALID`, verify that the queried FQDN occurs in the emblem's `assets` claim value using simple, case-insensitive string comparison.
 
 # Semantics of IHLE Emblems
 
@@ -103,7 +103,7 @@ Intuitively speaking, the emblem has the function of a stop sign and signals tha
 
 The emblem does not signal that systems which are identified by the domain name, e.g., via `A` or `AAAA` records, enjoy the same specific protections as the domain name itself.
 For example, it could be that a domain name has an `A` record which contains an IP address that routes to a multi-tenant database server, and tenants are identified by the domain name.
-That database server requires queries to include the domain of the tenant, and by itself, may not be protected.
+That database server requires queries to include the domain of the tenant and, by itself, may not be protected.
 Nevertheless, if one were to only discover this database server via a domain name that is marked with an emblem, there should be no reason to disrupt that database server.
 
 # Security Considerations
