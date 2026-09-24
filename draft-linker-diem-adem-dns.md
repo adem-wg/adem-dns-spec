@@ -81,10 +81,9 @@ If the transport's size limit prevents the complete RRset from being included, t
 ## DNSSEC Considerations
 
 ADEM tokens already are signed objects.
-Zone operators thus SHOULD NOT sign an `IHLE` RRset using DNSSEC.
-An `IHLE` RRset MAY nevertheless be signed with DNSSEC, for example, because it occurs in a zone whose operational policy is to sign all RRsets.
-DNS software MUST process such signatures according to the normal DNSSEC rules in {{!RFC4033}}, {{!RFC4034}}, and {{!RFC4035}}.
-Successful DNSSEC validation of the RRset MUST NOT be treated as successful validation of any ADEM token it contains or as establishing trust in public key material for ADEM validation.
+Thus, signing `IHLE` RRsets using DNSSEC is OPTIONAL.
+An `IHLE` RRset may be signed with DNSSEC, for example, because it occurs in a zone whose operational policy is to sign all RRsets.
+Successful DNSSEC validation of the RRset, though, MUST NOT be treated as successful validation of any ADEM token it contains or as establishing trust in public key material for ADEM validation.
 
 # Discovering and Validating IHLE Emblems
 
