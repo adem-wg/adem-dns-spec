@@ -3,9 +3,9 @@
 
 
 Digital Emblems                                                F. Linker
-Internet-Draft                                         16 September 2026
+Internet-Draft                                         24 September 2026
 Intended status: Informational                                          
-Expires: 20 March 2027
+Expires: 28 March 2027
 
 
    An Authentic Digital, Distinctive EMblem (ADEM) - Distribution and
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 20 March 2027.
+   This Internet-Draft will expire on 28 March 2027.
 
 Copyright Notice
 
@@ -88,7 +88,7 @@ Table of Contents
 
    [I-D.linker-diem-adem-core] specifies the message format and
    authorization model of digital emblems recognized under International
-   Humanitarian Law (IHL), in particular, it specifies the use of CBOR
+   Humanitarian Law (IHL); in particular, it specifies the use of CBOR
    Web Tokens (CWTs) [RFC8392] and COSE_Key structures [RFC9052] for
    digital, distinctive emblems.  This draft specifies how such emblems
    can mark fully qualified domain names (FQDNs) using the DNS and the
@@ -119,10 +119,10 @@ Table of Contents
    consumes all octets indicated by RDLENGTH.  It MUST contain exactly
    one complete CBOR data item and MUST NOT contain trailing data.
 
-   When an IHLE RR contains an emblem, the emblem's assets claim, MUST
-   be an array (major type 4) of UTF-8 strings (major type 3).  Each
-   string in this array MUST be an FQDN [RFC9499].  Relative names,
-   i.e., without a terminating empty label, are permitted and MUST be
+   When an IHLE RR contains an emblem, the emblem's assets claim MUST be
+   an array (major type 4) of UTF-8 strings (major type 3).  Each string
+   in this array MUST be an FQDN [RFC9499].  Relative names, i.e.,
+   without a terminating empty label, are permitted and MUST be
    interpreted relative to the empty root label.
 
 3.2.  IHLE RDATA Presentation Format
@@ -147,15 +147,13 @@ Table of Contents
 
 3.4.  DNSSEC Considerations
 
-   ADEM tokens already are signed objects.  Zone operators thus SHOULD
-   NOT sign an IHLE RRset using DNSSEC.  An IHLE RRset MAY nevertheless
-   be signed with DNSSEC, for example, because it occurs in a zone whose
-   operational policy is to sign all RRsets.  DNS software MUST process
-   such signatures according to the normal DNSSEC rules in [RFC4033],
-   [RFC4034], and [RFC4035].  Successful DNSSEC validation of the RRset
-   MUST NOT be treated as successful validation of any ADEM token it
-   contains or as establishing trust in public key material for ADEM
-   validation.
+   ADEM tokens already are signed objects.  Thus, signing IHLE RRsets
+   using DNSSEC is OPTIONAL.  An IHLE RRset may be signed with DNSSEC,
+   for example, because it occurs in a zone whose operational policy is
+   to sign all RRsets.  Successful DNSSEC validation of the RRset,
+   though, MUST NOT be treated as successful validation of any ADEM
+   token it contains or as establishing trust in public key material for
+   ADEM validation.
 
 4.  Discovering and Validating IHLE Emblems
 
@@ -170,9 +168,8 @@ Table of Contents
        [I-D.linker-diem-adem-core].
 
    2.  If the validation procedure returns a result other than INVALID,
-       verify that the queried FQDN represented occurs in the emblem's
-       assets claim value using simple, case-insensitive string
-       comparison.
+       verify that the queried FQDN occurs in the emblem's assets claim
+       value using simple, case-insensitive string comparison.
 
 5.  Semantics of IHLE Emblems
 
@@ -190,7 +187,7 @@ Table of Contents
    a domain name has an A record which contains an IP address that
    routes to a multi-tenant database server, and tenants are identified
    by the domain name.  That database server requires queries to include
-   the domain of the tenant, and by itself, may not be protected.
+   the domain of the tenant and, by itself, may not be protected.
    Nevertheless, if one were to only discover this database server via a
    domain name that is marked with an emblem, there should be no reason
    to disrupt that database server.
@@ -223,21 +220,6 @@ Table of Contents
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
-
-   [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
-              Rose, "DNS Security Introduction and Requirements",
-              RFC 4033, DOI 10.17487/RFC4033, March 2005,
-              <https://www.rfc-editor.org/rfc/rfc4033>.
-
-   [RFC4034]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
-              Rose, "Resource Records for the DNS Security Extensions",
-              RFC 4034, DOI 10.17487/RFC4034, March 2005,
-              <https://www.rfc-editor.org/rfc/rfc4034>.
-
-   [RFC4035]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
-              Rose, "Protocol Modifications for the DNS Security
-              Extensions", RFC 4035, DOI 10.17487/RFC4035, March 2005,
-              <https://www.rfc-editor.org/rfc/rfc4035>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
