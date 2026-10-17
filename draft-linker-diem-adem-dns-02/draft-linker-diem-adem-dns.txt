@@ -1,0 +1,247 @@
+
+
+
+
+Digital Emblems                                                F. Linker
+Internet-Draft                                           17 October 2026
+Intended status: Informational                                          
+Expires: 20 April 2027
+
+
+   An Authentic Digital, Distinctive EMblem (ADEM) - Distribution and
+                         Discovery over the DNS
+                   draft-linker-diem-adem-dns-latest
+
+Abstract
+
+   The ADEM Core Specification specifies the message format and
+   authorization model for digital, distinctive emblems.  This document
+   specifies how such emblems can be used to mark domain names and how
+   they can be conveyed over the DNS.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   The latest revision of this draft can be found at https://adem-
+   wg.github.io/adem-dns-spec/draft-linker-diem-adem-dns.html.  Status
+   information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-linker-diem-adem-dns/.
+
+   Discussion of this document takes place on the Digital Emblems
+   Working Group mailing list (mailto:diem@ietf.org), which is archived
+   at https://mailarchive.ietf.org/arch/browse/diem.  Subscribe at
+   https://www.ietf.org/mailman/listinfo/diem/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/adem-wg/adem-dns-spec.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 20 April 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Conventions and Definitions
+   3.  The IHLE Resource Record
+     3.1.  IHLE RDATA Wire Format
+     3.2.  IHLE RDATA Presentation Format
+     3.3.  Additional Section Processing
+     3.4.  DNSSEC Considerations
+   4.  Discovering and Validating IHLE Emblems
+   5.  Semantics of IHLE Emblems
+   6.  Security Considerations
+   7.  IANA Considerations
+   8.  Normative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   [I-D.linker-diem-adem-core] specifies the message format and
+   authorization model of digital emblems recognized under International
+   Humanitarian Law (IHL); in particular, it specifies the use of CBOR
+   Web Tokens (CWTs) [RFC8392] and COSE_Key structures [RFC9052] for
+   digital, distinctive emblems.  This draft specifies how such emblems
+   can mark fully qualified domain names (FQDNs) using the DNS and the
+   new IHLE DNS resource record (RR) type.
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   DNS terminology and message fields are used as defined in [RFC1035].
+
+3.  The IHLE Resource Record
+
+   The IHLE (International Humanitarian Law Emblem) DNS RR type is used
+   to mark an FQDN with a digital, distinctive emblem
+   [I-D.linker-diem-adem-core].  The type value for the IHLE RR is TODO.
+
+3.1.  IHLE RDATA Wire Format
+
+   The RDATA for an IHLE RR consists of a single variable-length Token
+   field.  The Token field MUST contain a CWT that either encodes an
+   ADEM token or a COSE_Key structure containing ADEM-related public key
+   material as specified in [I-D.linker-diem-adem-core].  The field
+   consumes all octets indicated by RDLENGTH.  It MUST contain exactly
+   one complete CBOR data item and MUST NOT contain trailing data.
+
+   When an IHLE RR contains an emblem, the emblem's assets claim MUST be
+   an array (major type 4) of UTF-8 strings (major type 3).  Each string
+   in this array MUST be an FQDN [RFC9499].  Relative names, i.e.,
+   without a terminating empty label, are permitted and MUST be
+   interpreted relative to the empty root label.
+
+3.2.  IHLE RDATA Presentation Format
+
+   The presentation format of the RDATA portion MUST represent the Token
+   field as a sequence of case-insensitive hexadecimal digits.
+   Whitespace is allowed within the hexadecimal text.
+
+3.3.  Additional Section Processing
+
+   When a name server receives a query whose QNAME is the owner name of
+   an IHLE RRset in the QCLASS, it MUST include that RRset in the
+   Additional section of the response, unless the RRset is already
+   included in the Answer section.  This requirement applies regardless
+   of the query's QTYPE.
+
+   The server MUST NOT include only a subset of the IHLE RRset.  If the
+   transport's size limit prevents the complete RRset from being
+   included, the server MUST set the TC bit; the complete response
+   returned following retry over a transport that permits a larger
+   response MUST include the entire RRset.
+
+3.4.  DNSSEC Considerations
+
+   ADEM tokens already are signed objects.  Thus, signing IHLE RRsets
+   using DNSSEC is optional.  An IHLE RRset may be signed with DNSSEC,
+   for example, because it is part of a signed zone.  Successful DNSSEC
+   validation of the RRset, though, MUST NOT be treated as successful
+   validation of any ADEM token it contains or as establishing trust in
+   public key material for ADEM validation.
+
+4.  Discovering and Validating IHLE Emblems
+
+   For distribution over the DNS, assets are identified by FQDNs.  To
+   retrieve an asset's digital emblems, validators can perform a general
+   DNS lookup, as specified in [RFC1034], with the asset's FQDN as
+   QNAME, an arbitrary QTYPE, and the QCLASS IN.  When validators
+   receive a set of tokens and public keys over the DNS, they validate
+   it as follows:
+
+   1.  Validate the set of tokens and public keys according to
+       [I-D.linker-diem-adem-core].
+
+   2.  If the validation procedure returns a result other than INVALID,
+       verify that the queried FQDN occurs in the emblem's assets claim
+       value using simple, case-insensitive string comparison.
+
+5.  Semantics of IHLE Emblems
+
+   A valid emblem that marks an FQDN signals that this domain name and
+   services associated with this domain name are used for purposes
+   protected under IHL.  It signals that the domain name and services
+   associated with that domain name should be respected, protected, and
+   not disrupted.  Intuitively speaking, the emblem has the function of
+   a stop sign and signals that one should not use a domain name as part
+   of an operation to disrupt services.
+
+   The emblem does not signal that systems which are identified by the
+   domain name, e.g., via A or AAAA records, enjoy the same specific
+   protections as the domain name itself.  For example, it could be that
+   a domain name has an A record which contains an IP address that
+   routes to a multi-tenant database server, and tenants are identified
+   by the domain name.  That database server requires queries to include
+   the domain of the tenant and, by itself, may not be protected.
+   Nevertheless, if one were to only discover this database server via a
+   domain name that is marked with an emblem, there should be no reason
+   to disrupt that database server.
+
+6.  Security Considerations
+
+   TODO
+
+7.  IANA Considerations
+
+   TODO
+
+8.  Normative References
+
+   [I-D.linker-diem-adem-core]
+              Linker, F., "ADEM Core Specification", Work in Progress,
+              Internet-Draft, draft-linker-diem-adem-core-01, 5 October
+              2026, <https://datatracker.ietf.org/doc/html/draft-linker-
+              diem-adem-core-01>.
+
+   [RFC1034]  Mockapetris, P., "Domain names - concepts and facilities",
+              STD 13, RFC 1034, DOI 10.17487/RFC1034, November 1987,
+              <https://www.rfc-editor.org/rfc/rfc1034>.
+
+   [RFC1035]  Mockapetris, P., "Domain names - implementation and
+              specification", STD 13, RFC 1035, DOI 10.17487/RFC1035,
+              November 1987, <https://www.rfc-editor.org/rfc/rfc1035>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC8392]  Jones, M., Wahlstroem, E., Erdtman, S., and H. Tschofenig,
+              "CBOR Web Token (CWT)", RFC 8392, DOI 10.17487/RFC8392,
+              May 2018, <https://www.rfc-editor.org/rfc/rfc8392>.
+
+   [RFC9052]  Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Structures and Process", STD 96, RFC 9052,
+              DOI 10.17487/RFC9052, August 2022,
+              <https://www.rfc-editor.org/rfc/rfc9052>.
+
+   [RFC9499]  Hoffman, P. and K. Fujiwara, "DNS Terminology", BCP 219,
+              RFC 9499, DOI 10.17487/RFC9499, March 2024,
+              <https://www.rfc-editor.org/rfc/rfc9499>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Author's Address
+
+   Felix Linker
+   Email: linkerfelix@gmail.com
